@@ -28,6 +28,21 @@ const Terminal = () => {
     }
   };
 
+  const handleOpenEditor = () => {
+    const fname = window.prompt('Enter filename to edit:');
+    if (!fname) return;
+    const f = filesInCurrentDir.find(x => x.name === fname);
+    if (!f) {
+      setHistory(prev => [...prev, `${getCurrentPathString()}> edit ${fname}`, `edit: ${fname}: No such file`]);
+      return;
+    }
+    if (f.is_directory) {
+      setHistory(prev => [...prev, `${getCurrentPathString()}> edit ${fname}`, `edit: ${fname}: Is a directory`]);
+      return;
+    }
+    navigate(`/editor/${f.id}`);
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const fullInput = input.trim();
@@ -87,6 +102,15 @@ const Terminal = () => {
         } catch (e) {
           newHistory.push(`kill: ${pid}: failed`);
         }
+        break; }
+
+      case 'edit': {
+        const fname = args[0];
+        if (!fname) { newHistory.push('Usage: edit <filename>'); break; }
+        const f = filesInCurrentDir.find(x => x.name === fname);
+        if (!f) { newHistory.push(`edit: ${fname}: No such file`); break; }
+        if (f.is_directory) { newHistory.push(`edit: ${fname}: Is a directory`); break; }
+        navigate(`/editor/${f.id}`);
         break; }
       case 'pkill': {
         const name = args[0];
@@ -496,6 +520,10 @@ const Terminal = () => {
       position: 'relative',
       borderRadius: '4px'
     }}>
+      <div style={{ position: 'relative', zIndex: 2, marginBottom: '10px', display: 'flex', gap: '10px' }}>
+        <button onClick={handleOpenEditor}>Open Editor...</button>
+        <button onClick={() => navigate('/dashboard')}>Back to Terminal</button>
+      </div>
       <div style={{
         position: 'absolute',
         top: 0,

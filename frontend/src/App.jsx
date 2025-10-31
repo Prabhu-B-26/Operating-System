@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import FileManager from './components/FileManager';
 import MemoryViewer from './pages/MemoryViewer';
+import EditorPage from './pages/EditorPage';
 import { useAuth } from './context/AuthContext';
 import './App.css';
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={user ? <FileManager /> : <Navigate to="/login" />} />
           <Route path="/memory" element={user ? <MemoryViewer /> : <Navigate to="/login" />} />
+          <Route path="/editor/:fileId" element={user ? <EditorPage /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
         </Routes>
       </main>
